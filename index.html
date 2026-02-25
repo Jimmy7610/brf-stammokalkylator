@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="sv">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRF Årsstämma – Kallelse & Handlingar</title>
+    <link rel="stylesheet" href="styles.css">
+    <meta name="description"
+        content="Kalkylator för datum kring BRF-stämmor. Räkna ut kallelsetid och när handlingar ska vara tillgängliga.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <header>
+        <div class="header-inner">
+            <h1>Stämmokalkylatorn</h1>
+            <div class="header-actions">
+                <button id="btn-theme-toggle" class="btn-icon" aria-label="Växla mörkt/ljust läge"
+                    title="Växla mörkt/ljust läge">
+                    <svg id="icon-moon" class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="icon-sun" class="theme-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <button id="btn-help" class="btn-text" aria-haspopup="dialog" aria-expanded="false">Hjälp &
+                    Förklaring</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="card form-container">
+            <form id="calc-form" novalidate>
+
+                <div class="form-group">
+                    <label for="meeting-date">
+                        Datum för ordinarie föreningsstämma
+                        <button type="button" class="info-btn" aria-label="Information om stämmodatum"
+                            data-info="Det datum då årsstämman faktiskt ska hållas.">ⓘ</button>
+                    </label>
+                    <input type="date" id="meeting-date" required>
+                    <div class="error-msg" id="error-date-missing">Vänligen ange ett datum för att se beräkningen.</div>
+                </div>
+
+
+                <div class="form-group" id="kallelse-ordinarie-options">
+                    <fieldset>
+                        <legend>
+                            Kallelsetid (Ordinarie stämma)
+                            <button type="button" class="info-btn" aria-label="Information om kallelsetid"
+                                data-info="Gäller om era stadgar inte anger en annan kallelsetid. Lagen säger att kallelse kan skickas tidigast sex och senast fyra veckor före, men stadgar kan tillåta senast två veckor.">ⓘ</button>
+                        </legend>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="kallelse-regel" value="4v" checked>
+                                <span class="radio-text">Huvudregel: senast 4 veckor före</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="kallelse-regel" value="2v">
+                                <span class="radio-text">Stadgar tillåter: senast 2 veckor före</span>
+                            </label>
+                        </div>
+                    </fieldset>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- Results section, hidden until a date is entered -->
+        <div id="results-container" class="card results-container hidden">
+            <div class="results-header">
+                <h2>Beräknade datum</h2>
+                <button type="button" id="btn-copy" class="btn-text">Kopiera resultat</button>
+            </div>
+
+            <div class="warning-box warning-weekend hidden" id="weekend-warning">
+                <strong>Obs:</strong> Datumet infaller på helg. Planera praktiskt så att utskick/tillgängliggörande blir
+                i tid. Appen justerar inte datum automatiskt.
+            </div>
+
+            <div class="warning-box hidden" id="extra-warning">
+                <strong>Viktigt vid extra stämma:</strong> Vissa ärenden (t.ex. stadgeändring, likvidation) kan kräva
+                längre kallelsetid. Kontrollera alltid aktuell lag och era stadgar.
+            </div>
+
+            <div class="results-list" id="results-list">
+                <!-- Injected via JS -->
+            </div>
+
+            <div class="results-list planning-list" id="planning-list">
+                <h3>Praktisk planering (praxis)</h3>
+                <!-- Injected via JS -->
+            </div>
+
+            <div id="handlingar-info-block"
+                style="margin-top: var(--spacing-5); padding-top: var(--spacing-4); border-top: 2px solid var(--color-text-main);">
+                <h3 style="margin-top: 0;">Hur handlingar får göras tillgängliga</h3>
+                <ul class="sources-list">
+                    <li><strong>Brevlåda</strong> (eller postfack)</li>
+                    <li><strong>Post</strong></li>
+                    <li><strong>E-post</strong> (kräver medlemmens uttryckliga samtycke)</li>
+                    <li><strong>Webbplats/portal</strong> (kräver inloggning, samt tydlig hänvisning i kallelsen)</li>
+                    <li><strong>På begäran</strong> (utskrift ska kunna lämnas/skickas till medlem som ber om det)</li>
+                </ul>
+            </div>
+
+            <div class="legal-disclaimer">
+                Appen är ett beräkningsstöd. Kontrollera alltid era stadgar och aktuell lagstiftning.
+                <a href="#" id="link-sources">Gå till källor</a>.
+            </div>
+        </div>
+        <div class="card about-card" style="margin-top: var(--spacing-6);">
+            <h2>Om sidan</h2>
+            <p>Detta är ett beräkningsstöd för BRF-styrelser och medlemmar för att planera årsstämman. Den räknar ut
+                tidigaste/senaste datum för kallelse samt när handlingar senast bör vara tillgängliga.</p>
+            <p>Verktyget ersätter inte juridisk rådgivning, och tar inte hänsyn till alla specialfall. Stadgar kan ange
+                andra tider. Kontrollera alltid era stadgar.</p>
+            <p>Alla påståenden länkas till lagtext (lagen.nu) och/eller praxis (Bostadsrätterna).</p>
+            <button type="button" class="btn-text" id="btn-show-sources" aria-haspopup="dialog"
+                style="margin-top: var(--spacing-2);">Visa källor</button>
+        </div>
+
+    </main>
+
+    <dialog id="modal-help" class="modal">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2>Hjälp & Förklaring</h2>
+                <button id="btn-close-help" aria-label="Stäng modal" class="btn-close">&times;</button>
+            </header>
+            <div class="modal-body">
+
+                <h3>Vad appen gör</h3>
+                <p>Appen hjälper styrelser i bostadsrättsföreningar att räkna ut lagstadgade hålltider (deadlines) för
+                    den ordinarie årsstämman; från kallelse till tillgängliggörande av handlingar.</p>
+
+                <h3>Vad appen inte gör</h3>
+                <p>Den tar inte hänsyn till postgångens exakta dagar eller specifika avvikande regler i just era
+                    stadgar, med undantag för den vanliga 2-veckorsregeln vid kallelse. Appen räknar utifrån
+                    mötesdatumet men varnar om sista datum infaller på en helg.</p>
+
+                <div class="warning-box">
+                    <strong>Viktig disclaimer:</strong> Detta verktyg utgör inte juridisk rådgivning. Stadgar kan ha
+                    andra tider eller specifika rutiner för exempelvis motioner eller extra stämmor. Kontrollera alltid
+                    era egna uppdaterade stadgar.
+                </div>
+
+                <h3>Lag vs. Praxis</h3>
+                <dl>
+                    <dt>Lag</dt>
+                    <dd>Regler i Lag om ekonomiska föreningar och Bostadsrättslagen, som föreningar juridiskt måste
+                        följa.</dd>
+
+                    <dt>Praxis / Rekommendation</dt>
+                    <dd>Standarder branschen eller rådgivare (t.ex. Bostadsrätterna) anser vara rimliga, men som inte
+                        utgör ett lagkrav med exakt datum (ex. tid för valberedningens arbete).</dd>
+                </dl>
+
+                <h3>Begrepp & Definitioner</h3>
+                <dl>
+                    <dt>Ordinarie stämma (årsstämma)</dt>
+                    <dd>Hålls en gång per år för att besluta om årsredovisning, ansvarsfrihet och val av styrelse.</dd>
+
+                    <dt>Kallelse</dt>
+                    <dd>Den formella inbjudan till stämman som skickas till alla medlemmar. Kallelse måste vara
+                        utskickad senast angivet datum.</dd>
+
+                    <dt>Handlingar (tillgängliga)</dt>
+                    <dd>Dokument (t.ex. årsredovisning, revisionsberättelse) som måste finnas fysiskt eller digitalt
+                        tillgängliga för medlemmarna att läsa.</dd>
+                </dl>
+
+                <h3 id="sources-section">Källor & Referenser</h3>
+                <ul class="sources-list">
+                    <li><a href="https://lagen.nu/2018:672" target="_blank" rel="noopener noreferrer">Lagen.nu: Lagen om
+                            ekonomiska föreningar (2018:672)</a> – Huvudregelverket för BRF.</li>
+                    <li><a href="https://lagen.nu/1991:614" target="_blank" rel="noopener noreferrer">Lagen.nu:
+                            Bostadsrättslagen (1991:614)</a> – Specifika BRF-regler.</li>
+                    <li><a href="https://www.bostadsratterna.se/kunskapsbanken" target="_blank"
+                            rel="noopener noreferrer">Bostadsrätterna Kunskapsbank</a> – Branschpraxis och tolkning
+                        kring kallelse & planering.</li>
+                </ul>
+
+            </div>
+        </div>
+    </dialog>
+
+    <!-- Reusable popover container -->
+    <div id="popover" class="popover hidden" role="tooltip" aria-live="polite"></div>
+
+    <script src="app.js"></script>
+
+    <footer>
+        <div class="footer-inner">
+            &copy; Jimmy Eliasson &ndash; Alla rättigheter förbehållna
+        </div>
+    </footer>
+</body>
+
+</html>
