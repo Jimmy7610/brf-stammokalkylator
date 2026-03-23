@@ -1,32 +1,45 @@
 <!DOCTYPE html>
 <html lang="sv">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRF Årsstämma – Kallelse & Handlingar</title>
-    <link rel="stylesheet" href="styles.css">
-    <meta name="description"
-        content="Kalkylator för datum kring BRF-stämmor. Räkna ut kallelsetid och när handlingar ska vara tillgängliga.">
+    <title>BRF Hjälpen</title>
+    <link rel="stylesheet" href="styles.css?v=20260323h">
+    <meta name="description" content="BRF Hjälpen samlar datumhjälp, medlemsregister, kallelser, närvaro och röstlängd i ett och samma verktyg.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-
 <body>
+    <section id="landing-screen" class="landing-screen" aria-label="Landningssida">
+        <div class="landing-screen-inner">
+            <span class="landing-kicker">BRF Hjälpen</span>
+            <h1>Ordning på stämman, från första planering till färdig röstlängd</h1>
+            <p class="landing-lead">BRF Hjälpen samlar datumhjälp, medlemsregister, kallelser, pappersutskick, närvaro och röstlängd i ett och samma verktyg för styrelsen.</p>
+            <div class="landing-screen-points">
+                <div class="landing-screen-point">Planera stämman</div>
+                <div class="landing-screen-point">Hantera medlemmar</div>
+                <div class="landing-screen-point">Skicka kallelser</div>
+                <div class="landing-screen-point">Följ ombud och närvaro</div>
+            </div>
+            <button id="btn-enter-app" type="button" class="btn-solid landing-enter">Öppna appen</button>
+            <p class="landing-hint">Tryck var som helst för att gå vidare</p>
+        </div>
+    </section>
 
+    <div id="app-shell" class="app-shell hidden">
     <header>
         <div class="header-inner">
-            <h1>Stämmokalkylatorn</h1>
+            <div class="brand-block">
+                <span class="eyebrow">För styrelser som vill ha ordning</span>
+                <h1>BRF Hjälpen</h1>
+            </div>
             <div class="header-actions">
-                <button id="btn-theme-toggle" class="btn-icon" aria-label="Växla mörkt/ljust läge"
-                    title="Växla mörkt/ljust läge">
-                    <svg id="icon-moon" class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <button id="btn-theme-toggle" class="btn-icon" aria-label="Växla mörkt eller ljust läge" title="Växla mörkt eller ljust läge">
+                    <svg id="icon-moon" class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                     </svg>
-                    <svg id="icon-sun" class="theme-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg id="icon-sun" class="theme-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="5"></circle>
                         <line x1="12" y1="1" x2="12" y2="3"></line>
                         <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -38,179 +51,668 @@
                         <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
                     </svg>
                 </button>
-                <button id="btn-help" class="btn-text" aria-haspopup="dialog" aria-expanded="false">Hjälp &
-                    Förklaring</button>
+                <button id="btn-help" class="btn-text" aria-haspopup="dialog" aria-expanded="false">Hjälp och regler</button>
             </div>
+        </div>
+        <div class="nav-shell">
+            <nav class="app-nav" aria-label="Huvudnavigation">
+                <button type="button" class="nav-link is-active" data-view-target="overview">Översikt</button>
+                <button type="button" class="nav-link" data-view-target="dates">Datumhjälp</button>
+                <button type="button" class="nav-link" data-view-target="members">Medlemmar</button>
+                <button type="button" class="nav-link" data-view-target="distribution">Kallelser</button>
+                <button type="button" class="nav-link" data-view-target="attendance">Röstlängd</button>
+            </nav>
         </div>
     </header>
 
     <main>
-        <div class="card form-container">
-            <form id="calc-form" novalidate>
-
-                <div class="form-group">
-                    <label for="meeting-date">
-                        Datum för ordinarie föreningsstämma
-                        <button type="button" class="info-btn" aria-label="Information om stämmodatum"
-                            data-info="Det datum då årsstämman faktiskt ska hållas.">ⓘ</button>
-                    </label>
-                    <input type="date" id="meeting-date" required>
-                    <div class="error-msg" id="error-date-missing">Vänligen ange ett datum för att se beräkningen.</div>
+        <section class="app-view is-active" data-view="overview">
+            <section class="landing-shell card">
+                <div class="landing-copy">
+                    <span class="eyebrow">BRF Hjälpen</span>
+                    <h2>En samlad arbetsyta för stämmor, medlemsregister och kallelser</h2>
+                    <p class="hero-lead">BRF Hjälpen är till för styrelser som vill få ordning på planering, medlemsdata, pappersutskick, e-post, närvaro och röstlängd utan att hoppa mellan flera olika dokument och listor.</p>
+                    <div class="landing-actions">
+                        <button type="button" class="btn-solid" data-open-view="members">Börja med medlemsregistret</button>
+                        <button type="button" class="btn-text" data-open-view="dates">Räkna viktiga datum</button>
+                    </div>
+                    <div class="landing-points">
+                        <article class="landing-point">
+                            <span class="landing-point-label">Vad appen är</span>
+                            <strong>Ett verktyg för verkligt BRF-arbete</strong>
+                            <p>Planering, register, kallelser och stämmodag i samma flöde.</p>
+                        </article>
+                        <article class="landing-point">
+                            <span class="landing-point-label">Vad den hjälper med</span>
+                            <strong>Mindre manuellt kaos och bättre överblick</strong>
+                            <p>Färre missar kring utskick, samtycken, ombud och röster.</p>
+                        </article>
+                    </div>
                 </div>
-
-
-                <div class="form-group" id="kallelse-ordinarie-options">
-                    <fieldset>
-                        <legend>
-                            Kallelsetid (Ordinarie stämma)
-                            <button type="button" class="info-btn" aria-label="Information om kallelsetid"
-                                data-info="Gäller om era stadgar inte anger en annan kallelsetid. Lagen säger att kallelse kan skickas tidigast sex och senast fyra veckor före, men stadgar kan tillåta senast två veckor.">ⓘ</button>
-                        </legend>
-                        <div class="radio-group">
-                            <label class="radio-label">
-                                <input type="radio" name="kallelse-regel" value="4v" checked>
-                                <span class="radio-text">Huvudregel: senast 4 veckor före</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="kallelse-regel" value="2v">
-                                <span class="radio-text">Stadgar tillåter: senast 2 veckor före</span>
-                            </label>
+                <div class="landing-side">
+                    <div class="landing-badge-card">
+                        <span class="mini-label">Så används BRF Hjälpen</span>
+                        <strong>Bygg underlaget först. Skicka sedan med lugn.</strong>
+                        <p>Appen är tänkt att kännas som ett kontrollrum för styrelsen, inte som ännu en liten kalkylator.</p>
+                    </div>
+                    <div class="landing-flow">
+                        <div class="landing-flow-step">
+                            <span>1</span>
+                            <div>
+                                <strong>Skapa eller välj stämma</strong>
+                                <p>Fyll i datum, plats, format och dagordning.</p>
+                            </div>
                         </div>
-                    </fieldset>
+                        <div class="landing-flow-step">
+                            <span>2</span>
+                            <div>
+                                <strong>Samla medlemsdata</strong>
+                                <p>Adresser, samtycken, ägarform och röstvärden.</p>
+                            </div>
+                        </div>
+                        <div class="landing-flow-step">
+                            <span>3</span>
+                            <div>
+                                <strong>Förbered kallelser</strong>
+                                <p>Digitalt, på papper eller båda delarna.</p>
+                            </div>
+                        </div>
+                        <div class="landing-flow-step">
+                            <span>4</span>
+                            <div>
+                                <strong>Följ upp stämmodagen</strong>
+                                <p>Ombud, fullmakter, check-in och röstlängd på ett ställe.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="card dashboard-hero">
+                <div class="hero-copy">
+                    <span class="eyebrow">Samlad hjälp för hela BRF-flödet</span>
+                    <h2>En plats för stämmor, medlemsregister, kallelser och röstlängd</h2>
+                    <p class="hero-lead">Använd översikten som ett kontrollrum för det som pågår just nu. Här väljer du aktiv stämma, följer läget och ser vad som behöver göras härnäst.</p>
+                    <div class="hero-steps">
+                        <button type="button" class="step-chip" data-open-view="dates">Räkna datum</button>
+                        <button type="button" class="step-chip" data-open-view="members">Öppna medlemsregister</button>
+                        <button type="button" class="step-chip" data-open-view="distribution">Planera kallelser</button>
+                        <button type="button" class="step-chip" data-open-view="attendance">Se röstlängd</button>
+                    </div>
+                </div>
+                <div class="hero-panel">
+                    <div class="hero-panel-block">
+                        <span class="mini-label">Nästa stämma</span>
+                        <strong id="overview-next-meeting">Ingen stämma vald ännu</strong>
+                        <p id="overview-next-deadline">Välj datum under Datumhjälp för att få juridiska hållpunkter.</p>
+                    </div>
+                    <div class="hero-panel-block">
+                        <span class="mini-label">Distribution</span>
+                        <strong id="overview-distribution">Ingen aktiv distributionsöversikt ännu</strong>
+                        <p>Papper, e-post eller båda ska kunna hanteras medlem för medlem.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="overview-grid">
+                <section class="card">
+                    <div class="section-heading">
+                        <span class="eyebrow">Stämmor</span>
+                        <h2>Aktiva och planerade möten</h2>
+                    </div>
+                    <div class="button-row compact-actions">
+                        <button type="button" id="btn-add-meeting" class="btn-solid">Skapa ny stämma</button>
+                    </div>
+                    <div id="meeting-list" class="meeting-list"></div>
+                </section>
+
+                <section class="card">
+                    <div class="section-heading">
+                        <span class="eyebrow">Läget just nu</span>
+                        <h2>Snabbstatus</h2>
+                    </div>
+                    <div id="overview-stats" class="summary-grid"></div>
+                </section>
+
+                <section class="card">
+                    <div class="section-heading">
+                        <span class="eyebrow">Vad du kan göra</span>
+                        <h2>Välj arbetsyta</h2>
+                    </div>
+                    <div class="feature-grid">
+                        <button type="button" class="feature-card" data-open-view="dates">
+                            <span class="feature-title">Datumhjälp</span>
+                            <span class="feature-copy">Räkna fram kallelsetider och hållpunkter enligt lag och praxis.</span>
+                        </button>
+                        <button type="button" class="feature-card" data-open-view="members">
+                            <span class="feature-title">Medlemsregister</span>
+                            <span class="feature-copy">Samla adresser, kontaktuppgifter, samtycken och röstvärden.</span>
+                        </button>
+                        <button type="button" class="feature-card" data-open-view="distribution">
+                            <span class="feature-title">Kallelser</span>
+                            <span class="feature-copy">Planera pappersutskick, e-post och uppföljning av svar.</span>
+                        </button>
+                        <button type="button" class="feature-card" data-open-view="attendance">
+                            <span class="feature-title">Röstlängd</span>
+                            <span class="feature-copy">Få överblick över ombud, fullmakter och vilka som faktiskt deltar.</span>
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <div class="overview-grid">
+                <section class="card">
+                    <div class="section-heading">
+                        <span class="eyebrow">Checklistan</span>
+                        <h2>Nästa steg för styrelsen</h2>
+                    </div>
+                    <ul id="overview-checklist" class="compact-list"></ul>
+                </section>
+                <section class="card">
+                    <div class="section-heading">
+                        <span class="eyebrow">Om produkten</span>
+                        <h2>Vad BRF Hjälpen är till för</h2>
+                    </div>
+                    <div class="info-stack">
+                        <p>Det här är inte bara en datumräknare. Tanken är att BRF Hjälpen ska växa till ett riktigt arbetsverktyg för föreningens stämmor, medlemsdata och praktiska administration.</p>
+                        <p>Datumhjälpen är en modul. Medlemsregistret är grunden. Därifrån ska appen kunna hjälpa till med kallelser, ombud, närvaro och röstlängd.</p>
+                    </div>
+                </section>
+            </div>
+        </section>
+
+        <section class="app-view" data-view="dates">
+            <div class="card form-container hero-card">
+                <div class="hero-copy">
+                    <span class="eyebrow">Datumhjälp</span>
+                    <h2>Räkna ut viktiga datum inför årsstämman</h2>
+                    <p class="hero-lead">Välj datum för ordinarie föreningsstämma och se när kallelse och handlingar behöver vara klara.</p>
+                    <div class="hero-steps">
+                        <div class="step-chip static-chip">1. Välj stämmodatum</div>
+                        <div class="step-chip static-chip">2. Kontrollera kallelsetid</div>
+                        <div class="step-chip static-chip">3. Planera handlingar</div>
+                    </div>
+                </div>
+                <form id="calc-form" novalidate>
+                    <div class="form-group">
+                        <label for="meeting-date">
+                            Datum för ordinarie föreningsstämma
+                            <button type="button" class="info-btn" aria-label="Information om stämmodatum" data-info="Det datum då årsstämman faktiskt ska hållas.">i</button>
+                        </label>
+                        <input type="date" id="meeting-date" required>
+                        <div class="error-msg" id="error-date-missing">Vänligen ange ett datum för att se beräkningen.</div>
+                    </div>
+
+                    <div class="form-group" id="kallelse-ordinarie-options">
+                        <fieldset>
+                            <legend>
+                                Kallelsetid för ordinarie stämma
+                                <button type="button" class="info-btn" aria-label="Information om kallelsetid" data-info="Lagen säger att kallelse får skickas tidigast sex veckor före stämman och normalt senast fyra veckor före. Stadgar kan tillåta senast två veckor före.">i</button>
+                            </legend>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="kallelse-regel" value="4v" checked>
+                                    <span class="radio-text">Huvudregel: senast 4 veckor före</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="kallelse-regel" value="2v">
+                                    <span class="radio-text">Stadgar tillåter: senast 2 veckor före</span>
+                                </label>
+                            </div>
+                        </fieldset>
+                    </div>
+                </form>
+            </div>
+
+            <div id="results-container" class="card results-container hidden">
+                <div class="results-header">
+                    <div>
+                        <span class="eyebrow">Juridiska hållpunkter</span>
+                        <h2>Beräknade datum</h2>
+                        <p class="section-intro">Här ser du vilka datum som styr när kallelsen får gå ut och när handlingarna senast ska finnas tillgängliga.</p>
+                    </div>
+                    <button type="button" id="btn-copy" class="btn-text">Kopiera resultat</button>
                 </div>
 
-            </form>
-        </div>
+                <div class="warning-box warning-weekend hidden" id="weekend-warning">
+                    <strong>Obs:</strong> Ett eller flera datum infaller på helg. Planera praktiskt så att utskick och tillgängliggörande sker i tid.
+                </div>
 
-        <!-- Results section, hidden until a date is entered -->
-        <div id="results-container" class="card results-container hidden">
-            <div class="results-header">
-                <h2>Beräknade datum</h2>
-                <button type="button" id="btn-copy" class="btn-text">Kopiera resultat</button>
+                <div class="warning-box hidden" id="extra-warning">
+                    <strong>Viktigt:</strong> Vid extra stämma eller särskilda ärenden kan andra regler gälla. Kontrollera alltid era stadgar och aktuell lag.
+                </div>
+
+                <div class="results-list" id="results-list"></div>
+                <div class="results-list planning-list" id="planning-list"></div>
+
+                <div id="handlingar-info-block" class="info-block">
+                    <h3>Hur handlingar får göras tillgängliga</h3>
+                    <ul class="sources-list">
+                        <li><strong>Brevlåda</strong> eller postfack</li>
+                        <li><strong>Post</strong></li>
+                        <li><strong>E-post</strong> om medlemmen har samtyckt</li>
+                        <li><strong>Portal eller webbplats</strong> med tydlig hänvisning i kallelsen</li>
+                        <li><strong>På begäran</strong> ska utskrift kunna lämnas eller skickas</li>
+                    </ul>
+                </div>
+
+                <div class="legal-disclaimer">
+                    Appen är ett beräkningsstöd. Kontrollera alltid era stadgar och aktuell lagstiftning.
+                    <a href="#" id="link-sources">Gå till källor</a>.
+                </div>
             </div>
+        </section>
 
-            <div class="warning-box warning-weekend hidden" id="weekend-warning">
-                <strong>Obs:</strong> Datumet infaller på helg. Planera praktiskt så att utskick/tillgängliggörande blir
-                i tid. Appen justerar inte datum automatiskt.
+        <section class="app-view" data-view="members">
+            <div class="card">
+                <div class="results-header">
+                    <div>
+                        <span class="eyebrow">Grunden i allt</span>
+                        <h2>Medlemsregister</h2>
+                        <p class="section-intro">Här samlar ni uppgifter om medlemmar, adresser, samtycken, röstvärden och eventuell ombudsinformation.</p>
+                    </div>
+                </div>
+
+                <div class="module-grid">
+                    <section class="module-panel">
+                        <h3>Registerstatus</h3>
+                        <div id="member-module-summary" class="summary-grid"></div>
+                    </section>
+                    <section class="module-panel">
+                        <h3>Vad som bör finnas här</h3>
+                        <ul id="member-module-checklist" class="compact-list"></ul>
+                    </section>
+                </div>
+
+                <form id="member-form" class="member-form" novalidate>
+                    <div class="meeting-panel-header member-panel-header">
+                        <span class="mini-label">Registerflöde</span>
+                        <h3>Ny medlem eller kontaktperson</h3>
+                        <p class="section-intro">Lägg in uppgifterna så att kallelser, pappersutskick, närvaro och röstlängd får rätt underlag från början.</p>
+                    </div>
+                    <div class="meeting-steps-inline">
+                        <div class="step-chip static-chip">1. Kontaktuppgifter</div>
+                        <div class="step-chip static-chip">2. Röst och distribution</div>
+                    </div>
+
+                    <div class="meeting-section-marker">
+                        <span class="section-step">Steg 1</span>
+                        <div>
+                            <strong>Kontakt och bostad</strong>
+                            <p>Det här gör det lättare att hålla isär adresser, lägenheter och vem som faktiskt ska få information.</p>
+                        </div>
+                    </div>
+                    <div class="member-form-grid">
+                        <div class="form-group">
+                            <label for="member-name">Namn</label>
+                            <input type="text" id="member-name" required placeholder="Anna Andersson">
+                            <p class="field-help">Ange den medlem eller kontaktperson som ni vill kunna söka fram snabbt inför stämman.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="member-address">Adress</label>
+                            <input type="text" id="member-address" placeholder="Tallgatan 4">
+                            <p class="field-help">Bra när föreningen har flera hus, portar eller olika gatuadresser.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="member-unit">Lägenhet</label>
+                            <input type="text" id="member-unit" placeholder="A-1102">
+                            <p class="field-help">Använd lägenhetsnummer eller intern beteckning som styrelsen faktiskt jobbar med.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="member-phone">Telefon</label>
+                            <input type="text" id="member-phone" placeholder="070-123 45 67">
+                            <p class="field-help">Praktiskt för snabba frågor inför utskick, check-in eller kompletteringar.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="member-email">E-post</label>
+                            <input type="email" id="member-email" placeholder="anna@example.se">
+                            <p class="field-help">Behövs om medlemmen ska kunna få digital kallelse eller svara enklare.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="member-ownership">Ägarform</label>
+                            <select id="member-ownership">
+                                <option value="single">Ensam ägare</option>
+                                <option value="co_owner">Delägare / samägande</option>
+                                <option value="representative">Kontaktperson för hushåll</option>
+                            </select>
+                            <p class="field-help">Hjälper er förstå om posten går till en person, ett hushåll eller en representant.</p>
+                        </div>
+                    </div>
+
+                    <div class="meeting-section-marker">
+                        <span class="section-step">Steg 2</span>
+                        <div>
+                            <strong>Röst och distribution</strong>
+                            <p>Det här styr hur medlemmen ska hanteras när kallelser skickas och när röstlängden tas fram.</p>
+                        </div>
+                    </div>
+                    <div class="member-form-grid member-form-grid-secondary">
+                        <div class="form-group">
+                            <label for="member-vote-weight">Röstvärde</label>
+                            <input type="number" id="member-vote-weight" min="0" step="1" value="1">
+                            <p class="field-help">Ange hur många röster som normalt ska räknas för medlemmen i systemet.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="member-distribution">Föredragen distribution</label>
+                            <select id="member-distribution">
+                                <option value="paper">Papper</option>
+                                <option value="email">E-post</option>
+                                <option value="both">Både papper och e-post</option>
+                            </select>
+                            <p class="field-help">Bra som utgångsläge när ni planerar kallelser per medlem eller hushåll.</p>
+                        </div>
+                    </div>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="member-email-consent" checked>
+                        Samtycke till e-postutskick
+                    </label>
+                    <p class="field-help field-help-inline">Markera bara detta om medlemmen faktiskt får kallas eller kontaktas digitalt enligt era rutiner.</p>
+                    <button type="submit" class="btn-solid">Lägg till medlem</button>
+                </form>
+
+                <div id="member-list" class="member-list"></div>
             </div>
+        </section>
 
-            <div class="warning-box hidden" id="extra-warning">
-                <strong>Viktigt vid extra stämma:</strong> Vissa ärenden (t.ex. stadgeändring, likvidation) kan kräva
-                längre kallelsetid. Kontrollera alltid aktuell lag och era stadgar.
+        <section class="app-view" data-view="distribution">
+            <div id="meeting-admin" class="card">
+                <div class="results-header">
+                    <div>
+                        <span class="eyebrow">Kallelser och förberedelser</span>
+                        <h2>Distribution och stämmoadministration</h2>
+                        <p class="section-intro">Planera utskick, välj kanal, följ status och sammanfatta läget inför stämman.</p>
+                    </div>
+                    <button type="button" id="btn-copy-admin" class="btn-text">Kopiera adminöversikt</button>
+                </div>
+
+                <div class="module-grid">
+                    <section class="module-panel">
+                        <h3>Distributionsstatus</h3>
+                        <div id="distribution-module-summary" class="summary-grid"></div>
+                    </section>
+                    <section class="module-panel">
+                        <h3>Distributionsprincip</h3>
+                        <ul id="distribution-module-checklist" class="compact-list"></ul>
+                    </section>
+                </div>
+
+                <div class="admin-grid">
+                    <section class="admin-panel">
+                        <div class="meeting-panel-header">
+                            <span class="mini-label">Arbetsflöde</span>
+                            <h3>Mötesdetaljer</h3>
+                            <p class="section-intro">Fyll i uppgifterna i ordning. Då blir kallelse, preview och distribution mycket lättare att få rätt.</p>
+                        </div>
+                        <div class="meeting-steps-inline">
+                            <div class="step-chip static-chip">1. Grund</div>
+                            <div class="step-chip static-chip">2. Plats och distribution</div>
+                            <div class="step-chip static-chip">3. Innehåll</div>
+                        </div>
+
+                        <div class="meeting-section-marker">
+                            <span class="section-step">Steg 1</span>
+                            <div>
+                                <strong>Grund för mötet</strong>
+                                <p>Bestäm rubrik, mötestyp och hur mötet ska hållas.</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="meeting-title">Rubrik för kallelse</label>
+                            <input type="text" id="meeting-title" placeholder="Ordinarie föreningsstämma 2027">
+                            <p class="field-help">Det här blir huvudrubriken i kallelsen och i utskriftspreviewn.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="meeting-type">Typ av möte</label>
+                            <select id="meeting-type">
+                                <option value="annual">Ordinarie årsstämma</option>
+                                <option value="extra">Extra stämma</option>
+                                <option value="information">Informationsmöte</option>
+                            </select>
+                            <p class="field-help">Påverkar språk, struktur och vad ni behöver tänka på inför utskicket.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="meeting-format">Mötesformat</label>
+                            <select id="meeting-format">
+                                <option value="physical">Fysisk stämma</option>
+                                <option value="hybrid">Hybrid</option>
+                                <option value="digital">Digital</option>
+                            </select>
+                            <p class="field-help">Visas i kallelsen så att medlemmarna förstår hur de ska delta.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="meeting-status">Status i processen</label>
+                            <select id="meeting-status">
+                                <option value="planning">Planering</option>
+                                <option value="ready_for_call">Klar för kallelse</option>
+                                <option value="called">Kallad</option>
+                                <option value="completed">Genomförd</option>
+                            </select>
+                            <p class="field-help">Ger en enkel nulägesbild i översikten och hjälper styrelsen hålla ihop arbetet.</p>
+                        </div>
+
+                        <div class="meeting-section-marker">
+                            <span class="section-step">Steg 2</span>
+                            <div>
+                                <strong>Plats och distribution</strong>
+                                <p>Det här är det medlemmarna först letar efter i en kallelse.</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="meeting-location">Plats</label>
+                            <input type="text" id="meeting-location" placeholder="Föreningslokalen, Tallgatan 4">
+                            <p class="field-help">Skriv lokal, adress eller digital instruktion så tydligt som möjligt.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="distribution-method">Primär distributionskanal</label>
+                            <select id="distribution-method">
+                                <option value="email">E-post</option>
+                                <option value="letterbox">Brevlåda eller postfack</option>
+                                <option value="post">Post</option>
+                                <option value="portal">Portal eller webbplats</option>
+                            </select>
+                            <p class="field-help">Används i planeringen och i previewn som stöd för styrelsen.</p>
+                        </div>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="meeting-paper-required">
+                            Markera om pappersutskick ska krävas som huvudregel
+                        </label>
+                        <p class="field-help field-help-inline">Bra om stadgarna, mötesärendet eller föreningens rutin gör att papper ska vara standard.</p>
+
+                        <div class="meeting-section-marker">
+                            <span class="section-step">Steg 3</span>
+                            <div>
+                                <strong>Innehåll i kallelsen</strong>
+                                <p>Beskriv kort vad mötet gäller och om något behöver stå extra tydligt.</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="meeting-agenda">Agenda eller mötesinfo</label>
+                            <textarea id="meeting-agenda" rows="4" placeholder="Exempel: årsredovisning, ansvarsfrihet, val av styrelse och inkomna motioner."></textarea>
+                            <p class="field-help">Det h?r blir den huvudsakliga informationen i kallelsen.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="meeting-special-matters">Särskilda ärenden</label>
+                            <textarea id="meeting-special-matters" rows="3" placeholder="Exempel: stadgeändring, större investering eller liknande."></textarea>
+                            <p class="field-help">Använd för beslut eller frågor som förtjänar extra synlighet i kallelsen.</p>
+                        </div>
+                        </div>
+                    </section>
+                    <section class="admin-panel">
+                        <h3>Statusöversikt</h3>
+                        <div id="admin-summary" class="summary-grid"></div>
+                        <div class="checklist-box">
+                            <h4>Praktisk checklista</h4>
+                            <ul id="meeting-checklist" class="compact-list"></ul>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="admin-grid">
+                    <section class="admin-panel">
+                        <h3>Import och export</h3>
+                        <p class="section-intro">Importera medlemslista som CSV eller exportera medlemslista och röstlängd.</p>
+                        <div class="tool-row">
+                            <input type="file" id="csv-file-input" accept=".csv,text/csv">
+                        </div>
+                        <div class="button-row">
+                            <button type="button" id="btn-import-csv" class="btn-solid">Importera CSV</button>
+                            <button type="button" id="btn-export-csv" class="btn-text">Exportera CSV</button>
+                            <button type="button" id="btn-export-voteroll" class="btn-text">Exportera röstlängd</button>
+                        </div>
+                        <p id="csv-status" class="status-text" aria-live="polite"></p>
+                    </section>
+
+                    <section class="admin-panel">
+                        <h3>E-postdistribution</h3>
+                        <p class="section-intro">Skicka kallelse via backend till de medlemmar som får eller ska få digital distribution.</p>
+                        <div class="form-group">
+                            <label for="email-subject">Ämnesrad</label>
+                            <input type="text" id="email-subject" placeholder="Kallelse till ordinarie föreningsstämma">
+                        </div>
+                        <div class="form-group">
+                            <label for="email-message">Meddelande</label>
+                            <textarea id="email-message" rows="6" placeholder="Hej! Här kommer kallelse till stämman. Datum, plats och praktisk information finns nedan."></textarea>
+                        </div>
+                        <div class="button-row">
+                            <button type="button" id="btn-send-email" class="btn-solid">Skicka e-postkallelse</button>
+                            <button type="button" id="btn-preview-email" class="btn-text">Förhandsgranska</button>
+                        </div>
+                        <p id="email-status" class="status-text" aria-live="polite"></p>
+                        <div id="email-preview" class="preview-box hidden"></div>
+                    </section>
+                </div>
+
+                <div class="admin-grid">
+                    <section class="admin-panel">
+                        <h3>Papperskallelse</h3>
+                        <p class="section-intro">Skapa en snygg utskriftsversion för de medlemmar som ska få kallelsen i brevlåda eller med post.</p>
+                        <div class="button-row">
+                            <button type="button" id="btn-preview-paper-call" class="btn-solid">Förhandsgranska papperskallelse</button>
+                            <button type="button" id="btn-print-paper-call" class="btn-text">Skriv ut papperskallelse</button>
+                        </div>
+                        <p id="paper-call-status" class="status-text" aria-live="polite"></p>
+                    </section>
+                    <section class="admin-panel">
+                        <h3>Förhandsgranskning</h3>
+                        <div id="paper-call-preview" class="paper-call-preview empty-state">
+                            Ingen preview ännu. Fyll i mötesuppgifterna och klicka på "Förhandsgranska papperskallelse".
+                        </div>
+                    </section>
+                </div>
             </div>
+        </section>
 
-            <div class="results-list" id="results-list">
-                <!-- Injected via JS -->
+        <section class="app-view" data-view="attendance">
+            <div class="card">
+                <div class="results-header">
+                    <div>
+                        <span class="eyebrow">Närvaro och ombud</span>
+                        <h2>Röstlängd och fullmakter</h2>
+                        <p class="section-intro">Se vilka som kommer, vilka som deltar via ombud och hur röstunderlaget ser ut just nu.</p>
+                    </div>
+                </div>
+                <div class="module-grid">
+                    <section class="module-panel">
+                        <h3>Närvarostatus</h3>
+                        <div id="attendance-module-summary" class="summary-grid"></div>
+                    </section>
+                    <section class="module-panel">
+                        <h3>Inför stämman</h3>
+                        <ul id="attendance-module-checklist" class="compact-list"></ul>
+                    </section>
+                </div>
+                <div id="vote-roll-summary" class="summary-grid"></div>
+                <div id="vote-roll-list" class="vote-roll-list"></div>
             </div>
+        </section>
 
-            <div class="results-list planning-list" id="planning-list">
-                <h3>Praktisk planering (praxis)</h3>
-                <!-- Injected via JS -->
+        <section class="card about-card">
+            <div class="section-heading">
+                <span class="eyebrow">Byggs för att växa</span>
+                <h2>Om BRF Hjälpen</h2>
             </div>
-
-            <div id="handlingar-info-block"
-                style="margin-top: var(--spacing-5); padding-top: var(--spacing-4); border-top: 2px solid var(--color-text-main);">
-                <h3 style="margin-top: 0;">Hur handlingar får göras tillgängliga</h3>
-                <ul class="sources-list">
-                    <li><strong>Brevlåda</strong> (eller postfack)</li>
-                    <li><strong>Post</strong></li>
-                    <li><strong>E-post</strong> (kräver medlemmens uttryckliga samtycke)</li>
-                    <li><strong>Webbplats/portal</strong> (kräver inloggning, samt tydlig hänvisning i kallelsen)</li>
-                    <li><strong>På begäran</strong> (utskrift ska kunna lämnas/skickas till medlem som ber om det)</li>
-                </ul>
+            <div class="info-stack">
+                <p>Det här är början på en bredare produkt för föreningens praktiska arbete. Datumhjälpen är en modul, men målet är att föreningen ska kunna samla medlemsregister, kallelser, närvaro och röstlängd i ett och samma system.</p>
+                <p>Verktyget ersätter inte juridisk rådgivning. Kontrollera alltid era stadgar, särskilda ärenden och aktuell lagstiftning.</p>
             </div>
-
-            <div class="legal-disclaimer">
-                Appen är ett beräkningsstöd. Kontrollera alltid era stadgar och aktuell lagstiftning.
-                <a href="#" id="link-sources">Gå till källor</a>.
-            </div>
-        </div>
-        <div class="card about-card" style="margin-top: var(--spacing-6);">
-            <h2>Om sidan</h2>
-            <p>Detta är ett beräkningsstöd för BRF-styrelser och medlemmar för att planera årsstämman. Den räknar ut
-                tidigaste/senaste datum för kallelse samt när handlingar senast bör vara tillgängliga.</p>
-            <p>Verktyget ersätter inte juridisk rådgivning, och tar inte hänsyn till alla specialfall. Stadgar kan ange
-                andra tider. Kontrollera alltid era stadgar.</p>
-            <p>Alla påståenden länkas till lagtext (lagen.nu) och/eller praxis (Bostadsrätterna).</p>
-            <button type="button" class="btn-text" id="btn-show-sources" aria-haspopup="dialog"
-                style="margin-top: var(--spacing-2);">Visa källor</button>
-        </div>
-
+            <button type="button" class="btn-text" id="btn-show-sources" aria-haspopup="dialog">Visa källor</button>
+        </section>
     </main>
 
     <dialog id="modal-help" class="modal">
         <div class="modal-content">
             <header class="modal-header">
-                <h2>Hjälp & Förklaring</h2>
-                <button id="btn-close-help" aria-label="Stäng modal" class="btn-close">&times;</button>
+                <h2>Hjälp och förklaring</h2>
+                <button id="btn-close-help" type="button" aria-label="Stäng hjälp och regler" class="btn-close">&times;</button>
             </header>
             <div class="modal-body">
+                <h3>Vad BRF Hjälpen gör</h3>
+                <p>BRF Hjälpen är ett arbetsverktyg för styrelsen, inte bara en datumräknare. Tanken är att ni ska kunna planera stämmor, samla medlemsuppgifter, förbereda kallelser, följa svar, registrera ombud och ta fram en enkel röstlängd i samma flöde.</p>
 
-                <h3>Vad appen gör</h3>
-                <p>Appen hjälper styrelser i bostadsrättsföreningar att räkna ut lagstadgade hålltider (deadlines) för
-                    den ordinarie årsstämman; från kallelse till tillgängliggörande av handlingar.</p>
+                <h3>Så hänger delarna ihop</h3>
+                <dl>
+                    <dt>Översikt</dt>
+                    <dd>Visar läget i föreningen just nu, nästa stämma, snabbstatus och vad som behöver göras härnäst.</dd>
 
-                <h3>Vad appen inte gör</h3>
-                <p>Den tar inte hänsyn till postgångens exakta dagar eller specifika avvikande regler i just era
-                    stadgar, med undantag för den vanliga 2-veckorsregeln vid kallelse. Appen räknar utifrån
-                    mötesdatumet men varnar om sista datum infaller på en helg.</p>
+                    <dt>Datumhjälp</dt>
+                    <dd>Hjälper er att räkna fram viktiga hållpunkter inför ordinarie stämma, till exempel senaste tid för kallelse och när handlingar bör vara klara.</dd>
+
+                    <dt>Medlemmar</dt>
+                    <dd>Detta är grunden i appen. Här sparar ni namn, adress, lägenhet, kontaktvägar, ägarform, röstvärde och om medlemmen kan få digitala utskick.</dd>
+
+                    <dt>Kallelser</dt>
+                    <dd>Här fyller ni i mötesdetaljer, väljer distributionssätt, följer status per medlem och kan förhandsgranska eller skriva ut papperskallelse.</dd>
+
+                    <dt>Röstlängd</dt>
+                    <dd>Byggs upp från medlemsregistret och den aktiva stämman. Närvaro, ombud och fullmaktsnoteringar påverkar vilka som visas där.</dd>
+                </dl>
+
+                <h3>Så fungerar flera stämmor</h3>
+                <p>Appen kan hantera flera stämmor. Varje stämma har sin egen mötesinformation och sin egen status för utskick, RSVP, check-in, ombud och fullmakt. Medlemsregistret är gemensamt, men svar och närvaro hör till den stämma som är vald.</p>
+
+                <h3>Viktigt om distribution</h3>
+                <p>Appen ska inte utgå från att e-post alltid räcker. Kallelser kan behöva delas ut i brevlåda, skickas per post eller hanteras enligt särskilda regler i stadgarna. Därför finns både distributionspreferenser i medlemsregistret och stöd för generell papperskallelse i systemet.</p>
+
+                <h3>Papperskallelse och preview</h3>
+                <p>När mötesuppgifterna är ifyllda kan ni skapa en utskriftsvänlig kallelse. Previewn är till för att ni ska kunna kontrollera språk, datum, plats och innehåll innan ni skriver ut. Den är generell för stämman och inte personlig per medlem.</p>
+
+                <h3>Ombud, fullmakter och närvaro</h3>
+                <p>Om en medlem deltar via ombud kan ni ange ombudets namn och notera fullmakt. På stämmodagen kan statusfältet för check-in användas som enkel avprickning. Röstlängden uppdateras utifrån det som registreras.</p>
 
                 <div class="warning-box">
-                    <strong>Viktig disclaimer:</strong> Detta verktyg utgör inte juridisk rådgivning. Stadgar kan ha
-                    andra tider eller specifika rutiner för exempelvis motioner eller extra stämmor. Kontrollera alltid
-                    era egna uppdaterade stadgar.
+                    <strong>Viktig disclaimer:</strong> Appen är ett administrativt stöd. Kallelser, distributionssätt, fullmakter, närvaro och röstlängd måste alltid hanteras i enlighet med lag, stadgar och den praktiska situationen i föreningen.
                 </div>
 
-                <h3>Lag vs. Praxis</h3>
-                <dl>
-                    <dt>Lag</dt>
-                    <dd>Regler i Lag om ekonomiska föreningar och Bostadsrättslagen, som föreningar juridiskt måste
-                        följa.</dd>
-
-                    <dt>Praxis / Rekommendation</dt>
-                    <dd>Standarder branschen eller rådgivare (t.ex. Bostadsrätterna) anser vara rimliga, men som inte
-                        utgör ett lagkrav med exakt datum (ex. tid för valberedningens arbete).</dd>
-                </dl>
-
-                <h3>Begrepp & Definitioner</h3>
-                <dl>
-                    <dt>Ordinarie stämma (årsstämma)</dt>
-                    <dd>Hålls en gång per år för att besluta om årsredovisning, ansvarsfrihet och val av styrelse.</dd>
-
-                    <dt>Kallelse</dt>
-                    <dd>Den formella inbjudan till stämman som skickas till alla medlemmar. Kallelse måste vara
-                        utskickad senast angivet datum.</dd>
-
-                    <dt>Handlingar (tillgängliga)</dt>
-                    <dd>Dokument (t.ex. årsredovisning, revisionsberättelse) som måste finnas fysiskt eller digitalt
-                        tillgängliga för medlemmarna att läsa.</dd>
-                </dl>
-
-                <h3 id="sources-section">Källor & Referenser</h3>
+                <h3>Det här bör ni kontrollera själva</h3>
                 <ul class="sources-list">
-                    <li><a href="https://lagen.nu/2018:672" target="_blank" rel="noopener noreferrer">Lagen.nu: Lagen om
-                            ekonomiska föreningar (2018:672)</a> – Huvudregelverket för BRF.</li>
-                    <li><a href="https://lagen.nu/1991:614" target="_blank" rel="noopener noreferrer">Lagen.nu:
-                            Bostadsrättslagen (1991:614)</a> – Specifika BRF-regler.</li>
-                    <li><a href="https://www.bostadsratterna.se/kunskapsbanken" target="_blank"
-                            rel="noopener noreferrer">Bostadsrätterna Kunskapsbank</a> – Branschpraxis och tolkning
-                        kring kallelse & planering.</li>
+                    <li>Vilken kallelsetid era stadgar faktiskt kräver.</li>
+                    <li>Om ett visst ärende kräver pappersutskick eller särskilda bilagor.</li>
+                    <li>Om e-post får användas för just den medlemmen.</li>
+                    <li>Att ombud och fullmakter hanteras korrekt inför stämman.</li>
                 </ul>
 
+                <h3 id="sources-section">Källor och referenser</h3>
+                <ul class="sources-list">
+                    <li><a href="https://lagen.nu/2018:672" target="_blank" rel="noopener noreferrer">Lagen.nu: Lag om ekonomiska föreningar (2018:672)</a></li>
+                    <li><a href="https://lagen.nu/1991:614" target="_blank" rel="noopener noreferrer">Lagen.nu: Bostadsrättslagen (1991:614)</a></li>
+                    <li><a href="https://www.bostadsratterna.se/kunskapsbanken" target="_blank" rel="noopener noreferrer">Bostadsrätterna kunskapsbank</a></li>
+                </ul>
+            </div>
+                    <li><a href="https://www.bostadsratterna.se/kunskapsbanken" target="_blank" rel="noopener noreferrer">Bostadsrätterna kunskapsbank</a></li>
+                </ul>
             </div>
         </div>
     </dialog>
 
-    <!-- Reusable popover container -->
     <div id="popover" class="popover hidden" role="tooltip" aria-live="polite"></div>
 
-    <script src="app.js"></script>
+    <script src="app.js?v=20260323h"></script>
 
     <footer>
         <div class="footer-inner">
-            &copy; Jimmy Eliasson &ndash; Alla rättigheter förbehållna
+            &copy; Jimmy Eliasson - Alla rättigheter förbehållna
         </div>
     </footer>
+    </div>
 </body>
-
 </html>

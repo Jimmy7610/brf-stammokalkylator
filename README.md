@@ -1,38 +1,66 @@
 # BRF StämmoGuide
 
-Ett beräkningsstöd för BRF-styrelser och medlemmar som hjälper till att planera ordinarie föreningsstämma (årsstämma) genom att räkna ut viktiga datum för kallelse och när handlingar senast bör vara tillgängliga.
+Ett beräknings- och administrationsstöd för BRF-stämmor. Appen hjälper till med datum för kallelse och handlingar, medlemslista, distributionsstatus, närvaro, fullmakter, röstlängd och e-postutskick via SMTP.
 
-## Vad verktyget gör
-- Tar ett valt stämmodatum och räknar ut:
-  - **Kallelse – tidigast** (6 veckor före)
-  - **Kallelse – senast** (4 veckor före som huvudregel, eller 2 veckor före om stadgarna tillåter)
-  - **Handlingar – senast tillgängliga** (2 veckor före)
-- Visar korta förklaringar och källhänvisningar (lagtext och praxis).
+## Funktioner
 
-## Vad verktyget inte gör
-- Ersätter inte juridisk rådgivning.
-- Tar inte hänsyn till alla specialfall eller samtliga stadgevarianter.
-- Justerar inte datum automatiskt för helgdagar – verktyget visar datum, och styrelsen planerar praktiskt därefter.
-
-## Viktigt om stadgar
-Stadgar kan ange andra tider. Kontrollera alltid er förenings stadgar och aktuell lagstiftning.
-
-## Källor
-Detta verktyg stödjer sig på officiella lagar och branschpraxis. Citerade källor inkluderar:
-- Svensk lagtext via [lagen.nu](https://lagen.nu)
-- Branschpraxis och rekommendationer via [Bostadsrätterna](https://www.bostadsratterna.se)
-- Föreskrifter från [Bolagsverket](https://bolagsverket.se) (där relevant)
-
-## Användning
-1. Öppna webbappen.
-2. Välj datum för ordinarie föreningsstämma.
-3. Läs av resultaten för tidigaste och senaste datum.
-4. Använd knappen **"Kopiera resultat"** för att enkelt dela tidsplanen med resten av styrelsen.
+- Beräknar viktiga datum för ordinarie föreningsstämma
+- Hanterar medlemslista med RSVP, check-in, fullmakter och röstvärde
+- Importerar och exporterar medlemslista som CSV
+- Exporterar röstlängd som CSV
+- Skickar kallelser via backend och SMTP
+- Sparar adminläge server-side i `data/app-state.json`
 
 ## Lokal körning
-Applikationen är byggd med standard webbteknik (Ren HTML, CSS och JavaScript) utan några byggsteg.
-- Ladda ner/klona detta repo till din dator.
-- Dubbelklicka på filen `index.html` för att öppna den direkt i din webbläsare.
 
-## Licens / Upphovsrätt
-© Jimmy Eliasson – Alla rättigheter förbehållna.
+1. Installera beroenden:
+
+```bash
+npm install
+```
+
+2. Kopiera `.env.example` till `.env` och fyll i SMTP-uppgifter om du vill använda e-postutskick.
+
+3. Starta appen:
+
+```bash
+npm start
+```
+
+4. Öppna [http://127.0.0.1:4173](http://127.0.0.1:4173)
+
+## SMTP-konfiguration
+
+Följande miljövariabler används:
+
+- `SMTP_HOST`
+- `SMTP_PORT`
+- `SMTP_SECURE`
+- `SMTP_USER`
+- `SMTP_PASS`
+- `SMTP_FROM`
+
+Om SMTP saknas kommer appen fortfarande fungera för planering, CSV och röstlängd, men e-postutskick visar ett tydligt felmeddelande.
+
+## Lagring
+
+Nuvarande version sparar administrativt appdata i backendfilen `data/app-state.json` och använder lokal cache i webbläsaren som fallback. Det här är ett steg mot riktig server-side lagring, men bör på sikt ersättas av databas och autentisering.
+
+## CSV-format
+
+CSV-importen stödjer bland annat dessa kolumner:
+
+- `name`
+- `unit` eller adress/lägenhet
+- `email`
+- `voteWeight`
+- `emailConsent`
+- `distributionStatus`
+- `rsvpStatus`
+- `attendanceStatus`
+- `proxyHolder`
+- `proxyDocument`
+
+## Viktigt
+
+Verktyget ersätter inte juridisk rådgivning. Kontrollera alltid er förenings stadgar och aktuell lagstiftning.

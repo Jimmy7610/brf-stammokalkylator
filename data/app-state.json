@@ -1,0 +1,18 @@
+{
+  "meetingTitle": "",
+  "meetingDate": "",
+  "callRule": "4v",
+  "meetingType": "annual",
+  "meetingLocation": "",
+  "meetingFormat": "physical",
+  "meetingStatus": "planning",
+  "meetingAgenda": "",
+  "meetingSpecialMatters": "",
+  "meetingPaperRequired": false,
+  "distributionMethod": "email",
+  "emailSubject": "",
+  "emailMessage": "",
+  "activeMeetingId": "",
+  "meetings": [],
+  "members": []
+}
