@@ -1192,11 +1192,52 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     meetingList.innerHTML = adminState.meetings.map((meeting) => `
-      <button type="button" class="meeting-item${meeting.id === adminState.activeMeetingId ? ' is-active' : ''}" data-meeting-id="${meeting.id}">
-        <span class="meeting-item-title">${escapeHtml(meeting.title || (meeting.type === 'extra' ? 'Extra stämma' : meeting.type === 'information' ? 'Informationsmöte' : 'Ordinarie årsstämma'))}</span>
-        <span class="meeting-item-meta">${escapeHtml(meeting.date || 'Datum ej valt')} | ${escapeHtml(meeting.status || 'planning')}</span>
-      </button>
+      <div class="meeting-item-row">
+        <button type="button" class="meeting-item${meeting.id === adminState.activeMeetingId ? ' is-active' : ''}" data-meeting-id="${meeting.id}">
+          <span class="meeting-item-title">${escapeHtml(meeting.title || (meeting.type === 'extra' ? 'Extra stämma' : meeting.type === 'information' ? 'Informationsmöte' : 'Ordinarie årsstämma'))}</span>
+          <span class="meeting-item-meta">${escapeHtml(meeting.date || 'Datum ej valt')} | ${escapeHtml(meeting.status || 'planning')}</span>
+        </button>
+        <button type="button" class="btn-text btn-danger meeting-delete-btn" data-action="delete-meeting" data-meeting-id="${meeting.id}" aria-label="Ta bort stämma">Ta bort</button>
+      </div>
     `).join('');
+  }
+
+  function deleteMeetingById(meetingId) {
+    const meeting = adminState.meetings.find((item) => item.id === meetingId);
+    if (!meeting) return;
+
+    const meetingLabel = meeting.title || (meeting.type === 'extra'
+      ? 'Extra stämma'
+      : meeting.type === 'information'
+        ? 'Informationsmöte'
+        : 'Ordinarie årsstämma');
+
+    const shouldDelete = window.confirm(`Vill du verkligen ta bort "${meetingLabel}"? Detta tar bort mötets utskicksstatus, RSVP, check-in och ombudsnoteringar.`);
+    if (!shouldDelete) return;
+
+    adminState.meetings = adminState.meetings.filter((item) => item.id !== meetingId);
+    adminState.activeMeetingId = adminState.meetings[0]?.id || '';
+    ensureMeetingCollection(adminState);
+    persistAndRender();
+  }
+
+  function deleteMemberById(memberId) {
+    const member = adminState.members.find((item) => item.id === memberId);
+    if (!member) return;
+
+    const shouldDelete = window.confirm(`Vill du verkligen ta bort medlemmen "${member.name || 'Utan namn'}"? Eventuella mötesspecifika noteringar som RSVP, check-in och fullmakt tas också bort.`);
+    if (!shouldDelete) return;
+
+    adminState.members = adminState.members.filter((item) => item.id !== memberId);
+    adminState.meetings = adminState.meetings.map((meeting) => {
+      const nextMemberStates = { ...(meeting.memberStates || {}) };
+      delete nextMemberStates[memberId];
+      return {
+        ...meeting,
+        memberStates: nextMemberStates
+      };
+    });
+    persistAndRender();
   }
 
   function renderMemberModule() {
@@ -1509,6 +1550,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   meetingList.addEventListener('click', (event) => {
+    const deleteButton = event.target.closest('[data-action="delete-meeting"]');
+    if (deleteButton) {
+      deleteMeetingById(deleteButton.dataset.meetingId);
+      return;
+    }
+
     const target = event.target.closest('[data-meeting-id]');
     if (!target) return;
     adminState.activeMeetingId = target.dataset.meetingId;
@@ -1666,17 +1713,7 @@ document.addEventListener('DOMContentLoaded', () => {
   memberList.addEventListener('click', (event) => {
     const button = event.target.closest('[data-action="delete-member"]');
     if (!button) return;
-    const memberId = button.dataset.memberId;
-    adminState.members = adminState.members.filter((member) => member.id !== memberId);
-    adminState.meetings = adminState.meetings.map((meeting) => {
-      const nextMemberStates = { ...(meeting.memberStates || {}) };
-      delete nextMemberStates[memberId];
-      return {
-        ...meeting,
-        memberStates: nextMemberStates
-      };
-    });
-    persistAndRender();
+    deleteMemberById(button.dataset.memberId);
   });
 
   btnPreviewEmail.addEventListener('click', () => {
