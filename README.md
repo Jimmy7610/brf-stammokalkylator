@@ -2,45 +2,36 @@
 
 BRF Hjälpen är en arbetsyta för bostadsrättsföreningens stämmor och administration. Appen samlar datumhjälp, medlemsregister, kallelser, pappersutskrifter, närvaro, ombud och röstlängd i ett och samma flöde.
 
-Det här är inte längre bara en datumkalkylator. Tanken är att styrelsen ska kunna gå från planering till genomförd stämma utan att hoppa mellan separata dokument, kalkylblad och manuella listor.
+Den här versionen är förberedd för Cloudflare:
+
+- frontend serveras som statiska assets
+- backend körs som en Cloudflare Worker
+- appdata lagras i Cloudflare D1
+- e-postutskick kan skickas via Resend
 
 ## Det appen gör idag
 
-- Visar en landningssida för `BRF Hjälpen` och öppnar sedan själva appen
-- Hanterar flera stämmor med egen mötesinformation per stämma
-- Räknar fram viktiga datum inför ordinarie stämma
-- Lagrar medlemsregister med adress, lägenhet, kontaktuppgifter, distributionspreferens och röstvärde
-- Hanterar distributionsstatus, RSVP, check-in, ombud och fullmakt per aktiv stämma
-- Skapar röstlängd utifrån medlemsdata och närvarostatus
-- Importerar och exporterar medlemsdata som CSV
-- Exporterar röstlängd som CSV
-- Förhandsgranskar och skriver ut generell papperskallelse
-- Skickar e-postkallelser via backend och SMTP
-- Sparar appdata i `data/app-state.json`
+- visar en landningssida för `BRF Hjälpen`
+- hanterar flera stämmor med egen mötesinformation per stämma
+- räknar fram viktiga datum inför ordinarie stämma
+- lagrar medlemsregister med adress, lägenhet, kontaktuppgifter, distributionspreferens och röstvärde
+- hanterar distributionsstatus, RSVP, check-in, ombud och fullmakt per aktiv stämma
+- skapar röstlängd utifrån medlemsdata och närvarostatus
+- importerar och exporterar medlemsdata som CSV
+- exporterar röstlängd som CSV
+- förhandsgranskar och skriver ut generell papperskallelse
+- skickar e-postkallelser via Worker-API om Resend är konfigurerat
 
-## Produktstruktur
+## Cloudflare-arkitektur
 
-Appen är uppdelad i följande delar:
+- Worker: `src/worker.js`
+- statiska filer: byggs till `dist/public`
+- Worker-konfig: `wrangler.jsonc`
+- D1-migrationer: `migrations/`
 
-- `Översikt`
-  Ger snabbstatus, visar nästa steg och listar stämmor.
-- `Datumhjälp`
-  Hjälper styrelsen att räkna fram hållpunkter för kallelse och handlingar.
-- `Medlemmar`
-  Samlar medlemsregister och distributionsrelevant information.
-- `Kallelser`
-  Hanterar mötesdetaljer, distribution, e-post och papperskallelse.
-- `Röstlängd`
-  Visar vilka som deltar, ombud, fullmakter och aktuellt röstunderlag.
+Nuvarande D1-upplägg lagrar appens adminstate som JSON i en tabell för att göra migreringen enkel. Det är en bra första Cloudflare-version, men på sikt bör detta delas upp i riktiga tabeller för medlemmar, stämmor och mötesspecifika statusfält.
 
-## Teknik
-
-- Frontend: statisk HTML, CSS och JavaScript
-- Backend: `Express`
-- E-post: `Nodemailer`
-- Lagring: filbaserat app-state i `data/app-state.json`
-
-## Lokal körning
+## Kom igång lokalt
 
 1. Installera beroenden:
 
@@ -48,50 +39,83 @@ Appen är uppdelad i följande delar:
 npm install
 ```
 
-2. Kopiera `.env.example` till `.env` om du vill använda e-postutskick.
-
-3. Starta appen:
+2. Logga in i Cloudflare:
 
 ```bash
-npm start
+npx wrangler login
 ```
 
-4. Öppna [http://127.0.0.1:4173](http://127.0.0.1:4173)
+3. Bygg frontend-assets för Worker:
 
-## SMTP-konfiguration
+```bash
+npm run prepare:cloudflare
+```
 
-Följande miljövariabler används:
+4. Starta lokal utvecklingsmiljö:
 
-- `SMTP_HOST`
-- `SMTP_PORT`
-- `SMTP_SECURE`
-- `SMTP_USER`
-- `SMTP_PASS`
-- `SMTP_FROM`
+```bash
+npm run dev
+```
 
-Om SMTP inte är konfigurerat fungerar appen fortfarande för planering, medlemsregister, preview, CSV och röstlängd, men e-postutskick kommer inte att skickas.
+## Skapa D1-databas
 
-## Lagring
+1. Skapa databasen:
 
-Nuvarande version sparar appdata i backendfilen `data/app-state.json`. Klienten använder även lokal cache i webbläsaren för att förbättra upplevelsen och kunna återhämta sig om servern inte svarar direkt.
+```bash
+npx wrangler d1 create brf-hjalpen
+```
 
-Det här är fortfarande en mellanlösning. För produktion bör lagringen på sikt flyttas till databas med autentisering, behörigheter och revisionsspår.
+2. Kopiera `database_id` från kommandots svar.
 
-## CSV-format
+3. Öppna `wrangler.jsonc` och ersätt:
 
-CSV-importen stödjer bland annat dessa kolumner:
+```json
+"database_id": "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+```
 
-- `name`
-- `address`
-- `unit`
-- `email`
-- `phone`
-- `voteWeight`
-- `emailConsent`
-- `preferredDistribution`
-- `ownershipType`
+med ditt riktiga D1-id.
 
-Exporten använder appens aktuella medlemsdata och röstlängd.
+4. Kör migrationen:
+
+```bash
+npm run cf:d1:migrate
+```
+
+## Deploy till Cloudflare
+
+När `wrangler.jsonc` har rätt D1-id:
+
+```bash
+npm run deploy
+```
+
+Efter deploy kan du koppla en custom domain som `brf.taren.se` till Workern i Cloudflare.
+
+## Miljövariabler
+
+Om du vill använda e-postutskick behöver du sätta följande Worker-secrets:
+
+- `RESEND_API_KEY`
+- `RESEND_FROM`
+
+Exempel:
+
+```bash
+npx wrangler secret put RESEND_API_KEY
+npx wrangler secret put RESEND_FROM
+```
+
+Om dessa saknas fungerar appen fortfarande för planering, medlemsregister, preview, CSV och röstlängd, men e-postutskick kommer inte att skickas.
+
+## Viktiga filer
+
+- `src/worker.js`
+- `wrangler.jsonc`
+- `migrations/0001_initial.sql`
+- `scripts/prepare-cloudflare.mjs`
+- `index.html`
+- `app.js`
+- `styles.css`
 
 ## Dokumentation
 

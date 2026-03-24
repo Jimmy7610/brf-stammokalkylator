@@ -2,14 +2,16 @@
   "name": "brf-stammokalkylator",
   "version": "1.0.0",
   "private": true,
-  "description": "Stammokalkylator och administrationsstod for BRF-stammor",
+  "description": "BRF Hjalpen for BRF-stammor on Cloudflare Workers",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "prepare:cloudflare": "node scripts/prepare-cloudflare.mjs",
+    "dev": "npm run prepare:cloudflare && wrangler dev",
+    "deploy": "npm run prepare:cloudflare && wrangler deploy",
+    "cf:deploy": "npm run prepare:cloudflare && wrangler deploy",
+    "cf:d1:migrate": "wrangler d1 migrations apply brf-hjalpen",
+    "cf:d1:migrate:local": "wrangler d1 migrations apply brf-hjalpen --local"
   },
-  "dependencies": {
-    "dotenv": "^16.6.1",
-    "express": "^5.1.0",
-    "nodemailer": "^7.0.3"
+  "devDependencies": {
+    "wrangler": "^4.9.1"
   }
 }

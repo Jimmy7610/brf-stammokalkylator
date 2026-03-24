@@ -1,0 +1,21 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "brf-hjalpen",
+	"main": "src/worker.js",
+	"compatibility_date": "2026-03-24",
+	"assets": {
+		"directory": "./dist/public",
+		"binding": "ASSETS"
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "brf-hjalpen",
+			"database_id": "183306eb-f84b-4600-9d33-aa6c20c480e0",
+			"migrations_dir": "migrations"
+		}
+	],
+	"vars": {
+		"APP_NAME": "BRF Hjälpen"
+	}
+}
