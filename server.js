@@ -8,7 +8,9 @@ const app = express();
 app.set('etag', false);
 const port = Number(process.env.PORT || 4173);
 const requestLog = new Map();
-const dataDir = path.join(__dirname, 'data');
+const dataDir = process.env.DATA_DIR
+  ? path.resolve(process.env.DATA_DIR)
+  : path.join(__dirname, 'data');
 const appStatePath = path.join(dataDir, 'app-state.json');
 
 const RATE_LIMIT_WINDOW_MS = 60 * 1000;
@@ -42,6 +44,10 @@ app.use(express.static(__dirname, {
     }
   }
 }));
+
+app.get('/healthz', (req, res) => {
+  res.status(200).json({ ok: true });
+});
 
 function rateLimit(req, res, next) {
   const key = `${req.ip}:${req.path}`;
